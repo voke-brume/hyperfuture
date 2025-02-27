@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
-CUDA_VISIBLE_DEVICES=0,1,2,3 PYTORCH_JIT=0 NCCL_LL_THRESHOLD=0 python \
+CUDA_VISIBLE_DEVICES=0 PYTORCH_JIT=0 NCCL_LL_THRESHOLD=0 python \
   -W ignore \
-  -i \
-  -m torch.distributed.launch \
-  --master_port=9999 \
-  --nproc_per_node=4 \
   main.py \
   --network_feature resnet18 \
   --dataset finegym \
@@ -21,15 +17,15 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 PYTORCH_JIT=0 NCCL_LL_THRESHOLD=0 python \
   --prefix future_subaction_linear_finegym_fromfinetune_hyperbolic \
   --fp16 \
   --fp64_hyper \
-  --pretrain /path/to/model/pretrained/on/finegym/checkpoint.pth.tar \
+  --pretrain /vulcan_data/roye_/hyperfuture/pretrained_models/checkpoints/train_finegym_hyperbolic/checkpoint.pth.tar \
   --linear_input predictions_z_hat \
   --n_classes 307 \
   --hierarchical_labels \
   --use_labels \
-  --num_workers 12 \
+  --num_workers 3 \
   --only_train_linear \
   --pred_future \
   --num_workers 8 \
   --seed 0 \
-  --path_dataset /path/to/datasets/FineGym \
-  --path_data_info /path/to/data/info
+  --path_dataset /vulcan_data/Finegym \
+  --path_data_info /vulcan_data/Finegym/dataset_info

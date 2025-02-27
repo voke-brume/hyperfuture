@@ -135,7 +135,6 @@ def get_args():
 
 def main():
     args = get_args()
-
     # Fix randomness
     seed = args.seed
     torch.cuda.manual_seed_all(seed)
@@ -216,6 +215,7 @@ def main():
 
     # setup tools
     img_path, model_path = set_path(args)
+    # print(f'This is the image_path: {img_path} and the model_path: {model_path}')
     writer_val = SummaryWriter(
         log_dir=os.path.join(img_path, 'val') if not args.debug else '/tmp') if args.local_rank <= 0 else None
     writer_train = SummaryWriter(

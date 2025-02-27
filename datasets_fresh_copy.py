@@ -347,41 +347,28 @@ class FineGym(data.Dataset):
         for root, dirs, files in os.walk(os.path.join(path_dataset, 'event_videos')):
             # We look at this folder instead of self.annotations because not all videos are downloaded for now
             for file in files:
-                # print(f'file before removing .mp4 {file} and after: {file.replace(".mp4", "")}')
                 clips.append(file.replace('.mp4', ''))
 
         self.subclipidx2label = {}
         clips_in_labels = set()  # Some clips in "clips" may belong to another split or not even be in the *element.txt
         with open(os.path.join(self.path_data_info, 'finegym', path_labels), 'r') as f:
             for line in f:
-                # print(f'line: {line.strip()}')
                 data_split = line.replace('\n', '').split()
-                # print(f'data_split: {data_split}')
                 subclip_name = data_split[0]
-                # print(f'subclip_name: {subclip_name}')
                 self.subclipidx2label[subclip_name] = int(data_split[1])
-                # print(f'subclipidx2label: {self.subclipidx2label[subclip_name]}')
                 clip_name = subclip_name[:27]
-                # print(f'clip_name: {clip_name} \n')
                 clips_in_labels.add(clip_name)
 
-        # print(f'Counts: {counts}')
-        # print(f'clips_in_labels size: {len(clips_in_labels)} \n')
         self.clips = {}  # Actual clips used in the dataset, with its actions
-        # print(f'clips_in_labels: {clips_in_labels}')
-        for clip in clips_in_labels:
+        for clip in clips:
             if clip.startswith('.'):
                 continue
-            # print(f'clip: {clip}')
-            # print(gym288)
-            # if self.return_label and clip not in clips_in_labels:  # For gym288, this filters out almost 2/3 of the data
-            #     # print(f'2nd continue: {count}')
-            #     continue
+            if self.return_label and clip not in clips_in_labels:  # For gym288, this filters out almost 2/3 of the data
+                continue
             assert len(clip) == 27  # youtube ID is 11, event ID is 15, and the separation
             video_id = clip[:11]
             event_id = clip[12:]
             segments = self.annotations[video_id][event_id]['segments']
-            # print(f'segments: {segments}')
 
             if segments is not None and (
                     # This is filtering out several short videos, approx 1/3 of the remaining videos for self.num_seq=6
@@ -612,9 +599,6 @@ def get_data(args, mode='train', return_label=False, hierarchical_label=False, a
                            path_data_info=path_data_info)
     else:
         raise ValueError('dataset not supported')
-    
-    # print(f'This is the mode: {mode}')
-    # print(f'The size of dataset: {len(dataset)}')
 
     sampler = data.RandomSampler(dataset) if mode == 'train' else data.SequentialSampler(dataset)
 

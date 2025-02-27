@@ -3,6 +3,10 @@ __pycache__/
 
 # Virtual environment
 venv_hypfut/
+venv_vulcan3.10/
 
 # Pretrained models
 pretrained_models
+
+# Logs
+logs/
